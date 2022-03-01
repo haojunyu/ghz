@@ -284,15 +284,18 @@ func main() {
 	var cfg runner.Config
 
 	if cfgPath != "" {
+		// 先从配置文件中获取运行参数,并置于cfg中
 		err := runner.LoadConfig(cfgPath, &cfg)
 		kingpin.FatalIfError(err, "")
 
+		// 再从命令行参数中获取运行参数，并置于cmdCfg中
 		args := os.Args[1:]
 		if len(args) > 1 {
 			var cmdCfg runner.Config
 			err = createConfigFromArgs(&cmdCfg)
 			kingpin.FatalIfError(err, "")
 
+			// 合并文件配置和命令行配置，以命令行参数为准
 			err = mergeConfig(&cfg, &cmdCfg)
 			kingpin.FatalIfError(err, "")
 		}
@@ -302,6 +305,7 @@ func main() {
 		kingpin.FatalIfError(err, "")
 	}
 
+	// 设置日志
 	var logger *zap.SugaredLogger
 
 	options := []runner.Option{runner.WithConfig(&cfg)}
