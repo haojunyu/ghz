@@ -327,6 +327,7 @@ func main() {
 		logger.Debugw("Start Run", "config", cfg)
 	}
 
+	// 压测运行主逻辑
 	report, err := runner.Run(cfg.Call, cfg.Host, options...)
 	if err != nil {
 		if logger != nil {

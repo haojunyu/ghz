@@ -39,6 +39,7 @@ const ScheduleStep = "step"
 const ScheduleLine = "line"
 
 // RunConfig represents the request Configs
+// 和 JAVA 中的 builder 类似
 type RunConfig struct {
 	// call settings
 	call               string
@@ -134,13 +135,13 @@ type RunConfig struct {
 	recvMsgFunc StreamRecvMsgInterceptFunc
 }
 
-// Option controls some aspect of run
+// Option controls some aspect of run 定义 Option 函数
 type Option func(*RunConfig) error
 
 // NewConfig creates a new RunConfig from the options passed
 func NewConfig(call, host string, options ...Option) (*RunConfig, error) {
 
-	// init with defaults
+	// init with defaults 设置参数默认值
 	c := &RunConfig{
 		n:            200,
 		c:            50,
@@ -152,7 +153,7 @@ func NewConfig(call, host string, options ...Option) (*RunConfig, error) {
 		loadSchedule: ScheduleConst,
 	}
 
-	// apply options
+	// apply options 通过option来给RunConfig实例更新配置
 	for _, option := range options {
 		err := option(c)
 
@@ -193,6 +194,7 @@ func NewConfig(call, host string, options ...Option) (*RunConfig, error) {
 		return nil, errors.New("cannot use dynamic messages with binary data")
 	}
 
+	// 负载压测方式：稳定rps，逐步增加rps，线性增加rps
 	if c.loadSchedule != ScheduleConst &&
 		c.loadSchedule != ScheduleStep &&
 		c.loadSchedule != ScheduleLine {
@@ -216,6 +218,7 @@ func NewConfig(call, host string, options ...Option) (*RunConfig, error) {
 		}
 	}
 
+	// 并发压测方式：恒定并发数，逐步增加并发数，线性增加并发数
 	if c.cSchedule == ScheduleStep || c.cSchedule == ScheduleLine {
 		if c.cStart == c.cEnd {
 			return nil, errors.New("concurrency start start cannot equal concurrency end")
